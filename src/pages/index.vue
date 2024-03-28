@@ -1,14 +1,24 @@
 <template>
-  <div class="text-h4">커뮤니티 목록</div>
-  <ul>
-    <li>
-      <router-link to="/posts/1">1번 계시글</router-link>
-    </li>
-  </ul>
+  <q-page>
+    <div class="text-h4">커뮤니티 목록</div>
+    <section class="q-gutter-y-sm q-mt-lg">
+      <!-- <q-card v-for="id in 100" :key="id" @click="goPostDetails(id)">
+        <q-card-section>{{ id }}번계시글</q-card-section>
+      </q-card> -->
+
+      <q-card v-for="id in 100" :key="id">
+        <router-link :to="`/posts/${id}`">
+          <q-card-section>{{ id }}번계시글</q-card-section>
+        </router-link>
+      </q-card>
+    </section>
+  </q-page>
 </template>
 
-<script>
-export default {};
+<script setup>
+import { useRouter } from 'vue-router';
+const router = useRouter();
+// const goPostDetails = id => router.push(`/posts/${id}`);
 </script>
 
 <style lang="scss" scoped></style>
