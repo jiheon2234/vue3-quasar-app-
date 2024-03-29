@@ -13,7 +13,7 @@
         class="full-width"
         unelevated
         flat
-        @click="$emit('changeView', 'SigninForm')"
+        @click="$emit('changeView', 'SignInForm')"
       />
     </q-form>
   </div>

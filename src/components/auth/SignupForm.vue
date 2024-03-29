@@ -20,8 +20,6 @@
 </template>
 
 <script setup>
-import SigninForm from './SigninForm.vue';
-
 defineEmits(['changeView']);
 </script>
 
