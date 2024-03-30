@@ -62,9 +62,10 @@ import AuthDialog from 'src/components/auth/AuthDialog.vue';
 const route = useRoute();
 
 const pageContainerStyles = computed(() => ({
-  maxWidth: route.meta.width || '1080px',
+  maxWidth: route.meta.width || '1000px',
   margin: '0 auto',
-}));
+}
+));
 
 const authDialog = ref(false);
 const openAuthDialog = () => (authDialog.value = true);

@@ -14,7 +14,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
-import PostList from 'src/components/post/PostList.vue';
+import PostList from 'src/components/apps/post/PostList.vue';
 import PostHeader from './components/PostHeader.vue';
 import PostLeftBar from './components/PostLeftBar.vue';
 import PostRightBar from './components/PostRightBar.vue';
