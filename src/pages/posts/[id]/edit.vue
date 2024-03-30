@@ -1,14 +1,46 @@
 <template>
-  <div class="text-h4">계시글 수정</div>
-  <ul>
-    <li>
-      <router-link to="/posts/1">목록으로 이동</router-link>
-    </li>
-  </ul>
+  <q-page padding>
+    <BaseCard>
+      <q-toolbar>
+        <q-toolbar-title>글쓰기</q-toolbar-title>
+      </q-toolbar>
+
+      <q-separator />
+      <PostForm
+        v-model:title="form.title"
+        v-model:category="form.category"
+        v-model:content="form.content"
+      >
+        <template #actions>
+          <q-btn flat label="취소" v-close-popup />
+          <q-btn type="submit" flat label="수정" color="primary" />
+        </template>
+      </PostForm>
+    </BaseCard>
+  </q-page>
 </template>
 
 <script>
-export default {};
+const getInitialForm = () => ({
+  title: '',
+  category: '',
+  content: '',
+  tags: '',
+});
+</script>
+
+<script setup>
+import { ref } from 'vue';
+import BaseCard from 'src/components/base/BaseCard.vue';
+import { getCategories } from 'src/services/category';
+import PostForm from 'src/components/apps/post/PostForm.vue';
+
+const form = ref(getInitialForm());
 </script>
 
 <style lang="scss" scoped></style>
+
+<route lang="yaml">
+meta:
+  width: 800px
+</route>

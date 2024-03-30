@@ -34,7 +34,6 @@ const posts = Array.from({ length: 20 }, (_, idx) => ({
   commentCount: 2,
   likeCount: 3,
   bookmarkCount: 4,
-  tags: ['html', 'css', 'javascript'],
   uid: 'uid',
   category: '카테고리' + idx,
 }));
