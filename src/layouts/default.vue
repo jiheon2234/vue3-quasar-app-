@@ -35,7 +35,7 @@
           href="https://www.youtube.com"
           target="_blank"
         />
-        <q-seperator class="q-my-md q-mr-md" vertical />
+        <q-separator class="q-my-md q-mr-md" vertical />
         <q-btn
           unelevated
           rounded
@@ -64,9 +64,10 @@ const route = useRoute();
 const pageContainerStyles = computed(() => ({
   maxWidth: route.meta.width || '1000px',
   margin: '0 auto',
-}
-));
+}));
 
 const authDialog = ref(false);
-const openAuthDialog = () => (authDialog.value = true);
+const openAuthDialog = () => {
+  authDialog.value = true;
+};
 </script>
