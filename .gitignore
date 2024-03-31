@@ -34,3 +34,8 @@ yarn-error.log*
 
 ## mynote
 mynote/
+
+## secret
+
+.env.*
+src/boot
