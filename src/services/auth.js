@@ -65,5 +65,5 @@ export async function updateUserProfile(displayName) {
 }
 
 export async function updateUserEmail(email) {
-  await updateEmail(auth.currentUser, email);
+  await updateEmail(auth.currentUser, email); 
 }
