@@ -1,6 +1,6 @@
 <template>
   <q-dialog persistent v-bind="$attrs" @hide="onHide">
-    <q-card :style="{ width: '660px' }">
+    <q-card :style="{ minWidth: '660px' }">
       <q-toolbar>
         <q-toolbar-title>글쓰기</q-toolbar-title>
         <q-btn v-close-popup flat round dense icon="close" />
