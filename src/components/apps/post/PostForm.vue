@@ -1,13 +1,21 @@
 <template>
-  <q-form>
+  <q-form @submit.prevent="handleSubmit">
     <q-card-section class="q-gutter-y-sm">
-      <q-input v-model="titleModel" outlined placeholder="제목" />
+      <q-input
+        v-model="titleModel"
+        outlined
+        placeholder="제목"
+        hide-bottom-space
+        :rules="[validateRequired]"
+      />
       <q-select
         outlined
         v-model="categoryModel"
         :options="categories"
         emit-value
-        map-options
+        map-optionsa
+        hide-bottom-space
+        :rules="[validateRequired]"
       >
         <template v-if="!categoryModel" #selected>
           <span class="text-grey-7">카테고리를 선택하세요</span>
@@ -21,20 +29,34 @@
         placeholder="내용을 작성해주세요"
       /> -->
       <q-input
-        v-model="tagField"
         outlined
         placeholder="태그를 입력해주세요 (Enter)"
         prefix="#"
+        @keypress.enter.prevent="onRegistTag"
       />
-      <q-chip outline dense removable color="teal" @remove="removeTag"
-        >vuejs
+      <q-chip
+        v-for="(tag, index) in tags"
+        :key="tag"
+        outline
+        dense
+        removable
+        color="teal"
+        @remove="removeTag(index)"
+      >
+        {{ tag }}
       </q-chip>
     </q-card-section>
     <q-separator />
     <q-card-actions align="right">
       <slot name="actions">
         <q-btn flat label="취소하기" v-close-popup />
-        <q-btn type="submit" flat label="저장하기" color="primary" />
+        <q-btn
+          type="submit"
+          flat
+          label="저장하기"
+          color="primary"
+          :loading="loading"
+        />
       </slot>
     </q-card-actions>
   </q-form>
@@ -43,8 +65,12 @@
 <script setup>
 import { getCategories } from 'src/services/category';
 import { computed } from 'vue';
+import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 import TiptabEditor from 'src/components/tiptap/TiptabEditor.vue';
+import { validateRequired } from 'src/utils/validate-rules';
+
+const $q = useQuasar();
 
 const props = defineProps({
   title: {
@@ -60,6 +86,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits([
@@ -67,6 +97,7 @@ const emit = defineEmits([
   'update:category',
   'update:content',
   'update:tags',
+  'submit',
 ]);
 
 const titleModel = computed({
@@ -84,10 +115,33 @@ const contentModel = computed({
   set: val => emit('update:content', val),
 });
 
-const tagField = ref('');
+const onRegistTag = e => {
+  const tagValue = e.target.value.replace(/ /g, '');
+  if (!tagValue) return;
+  if (props.tags.length >= 5) {
+    $q.notify('태그는 5개까지만 등록할 수 있습니다.');
+    return;
+  }
+  if (!props.tags.includes(tagValue)) {
+    emit('update:tags', [...props.tags, tagValue]);
+  }
+  e.target.value = '';
+};
 
-const removeTag = () => {};
+const removeTag = index => {
+  const model = [...props.tags];
+  model.splice(index, 1);
+  emit('update:tags', model);
+};
 const categories = getCategories();
+
+const handleSubmit = () => {
+  if (contentModel.value === '') {
+    $q.notify('내용을 입력해주세요');
+    return;
+  }
+  emit('submit');
+};
 </script>
 
 <style lang="scss" scoped></style>

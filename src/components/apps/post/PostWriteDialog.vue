@@ -11,6 +11,14 @@
         v-model:title="form.title"
         v-model:category="form.category"
         v-model:content="form.content"
+        v-model:tags="form.tags"
+        :loading="isLoading"
+        @submit="
+          execute(1000, {
+            ...form,
+            uid: authStore.uid,
+          })
+        "
       />
     </q-card>
   </q-dialog>
@@ -27,17 +35,34 @@ const getInitialForm = () => ({
 
 <script setup>
 import { ref } from 'vue';
-import { getCategories } from 'src/services/category';
 import PostForm from './PostForm.vue';
-
-const categories = getCategories();
+import { createPost } from 'src/services/post';
+import { useAsyncState } from '@vueuse/core';
+import { useAuthStore } from 'src/stores/auth';
+import { useRouter } from 'vue-router';
+import { route } from 'quasar/wrappers';
+const authStore = useAuthStore();
+const router = useRouter();
 
 const form = ref(getInitialForm());
 
 const onHide = () => {
-  // console.log('onHide');
   form.value = getInitialForm();
 };
+
+const { isLoading, execute } = useAsyncState(createPost, null, {
+  immediate: false,
+  throwError: true,
+  onSuccess: postId => {
+    console.log('postId', postId);
+    router.push(`/posts/${postId}`);
+  },
+});
+// const handleSubmit = () =>
+//   execute(1000, {
+//     ...form.value,
+//     uid: authStore.uid,
+//   });
 </script>
 
 <style lang="scss" scoped></style>
