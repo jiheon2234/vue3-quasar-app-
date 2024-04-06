@@ -26,3 +26,13 @@ export async function createPost(data) {
   //   createdAt: serverTimestamp(),
   // });
 }
+
+export async function getPosts(params) {
+  const querySnapshot = await getDocs(collection(db, 'posts'));
+  const posts = querySnapshot.docs.map(doc => {
+    const data = doc.data();
+    return { id: doc.id, ...data, createdAt: data.createdAt.toDate() };
+  });
+  console.log(posts);
+  return posts;
+}

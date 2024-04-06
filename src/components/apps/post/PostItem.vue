@@ -1,4 +1,5 @@
-1<template>
+1
+<template>
   <q-item class="bg-white q-pt-md" clickable :to="`/posts/${id}`">
     <q-item-section avatar top>
       <q-avatar>
@@ -7,7 +8,11 @@
     </q-item-section>
     <q-item-section>
       <div class="flex items-center">
-        <span>닉네임 &middot; &nbsp;3일전</span>
+        <span
+          >닉네임 &middot; &nbsp;{{
+            date.formatDate(createdAt, 'YY/MM/DD HH:MM')
+          }}</span
+        >
         <q-chip class="q-ml-sm" dense color="primary" text-color="white">
           {{ category }}
         </q-chip>
@@ -20,25 +25,37 @@
       <div class="row items-center">
         <div class="col-3">
           <div class="flex flex-center">
-            <PostIcon name="sym_o_visibility" :label="readCount" tooltip="조회수"/>
+            <PostIcon
+              name="sym_o_visibility"
+              :label="readCount"
+              tooltip="조회수"
+            />
           </div>
         </div>
         <div class="col-3">
           <div class="flex flex-center">
-            <PostIcon name="sym_o_sms" :label="commentCount" tooltip="댓글수"/>
+            <PostIcon name="sym_o_sms" :label="commentCount" tooltip="댓글수" />
           </div>
         </div>
         <div class="col-3">
           <div class="flex flex-center">
             <q-btn class="full-width" flat dense @click.prevent>
-              <PostIcon name="sym_o_favorite" :label="likeCount" tooltip="좋아요"/>
+              <PostIcon
+                name="sym_o_favorite"
+                :label="likeCount"
+                tooltip="좋아요"
+              />
             </q-btn>
           </div>
         </div>
         <div class="col-3">
           <div class="flex flex-center">
             <q-btn class="full-width" flat dense @click.prevent>
-              <PostIcon name="sym_o_bookmark" :label="bookmarkCount" tooltip="북마크"/>
+              <PostIcon
+                name="sym_o_bookmark"
+                :label="bookmarkCount"
+                tooltip="북마크"
+              />
             </q-btn>
           </div>
         </div>
@@ -48,7 +65,8 @@
 </template>
 
 <script setup>
-import PostIcon from './PostIcon.vue'
+import PostIcon from './PostIcon.vue';
+import { date } from 'quasar';
 
 defineProps({
   id: {
@@ -79,7 +97,7 @@ defineProps({
   category: {
     type: String,
   },
-  createTime: {
+  createdAt: {
     type: Date,
   },
   tags: {
