@@ -18,7 +18,7 @@
           class="full-width"
           unelevated
           color="primary"
-          :loading="isloading"
+          :loading="isLoading"
         />
         <div class="flex justify-between">
           <q-btn
@@ -58,12 +58,29 @@ import { ref } from 'vue';
 import { useQuasar } from 'quasar';
 import DisplayError from 'src/components/DisplayError.vue';
 import { getErrorMessage } from 'src/utils/firebase/error-message';
+import { useAsyncState } from '@vueuse/core';
 const emit = defineEmits(['changeView', 'closeDialog']);
 
 const $q = useQuasar();
 
-const isloading = ref(false);
-const error = ref(null);
+// const isloading = ref(false);
+// const error = ref(null);
+
+const { isLoading, error, execute } = useAsyncState(signInWithEmail, null, {
+  immediate: false,
+  // throwError : true,
+  onSuccess: () => {
+    $q.notify('환영합니다');
+    emit('closeDialog');
+  },
+  onError: err => {
+    error.value = err;
+    $q.notify({
+      type: 'negative',
+      message: getErrorMessage(err.code),
+    });
+  },
+});
 
 //이메일로그인
 const form = ref({
@@ -71,22 +88,24 @@ const form = ref({
   password: '',
 });
 
-const handleSignInEmail = async () => {
-  try {
-    isloading.value = true;
-    await signInWithEmail(form.value);
-    $q.notify('환영합니다');
-    emit('closeDialog');
-  } catch (err) {
-    error.value = err;
-    $q.notify({
-      type: 'negative',
-      message: getErrorMessage(err.code),
-    });
-  } finally {
-    isloading.value = false;
-  }
-};
+const handleSignInEmail = () => execute(1000, form.value);
+
+// const handleSignInEmail = async () => {
+//   try {
+//     isloading.value = true;
+//     await signInWithEmail(form.value);
+//     $q.notify('환영합니다');
+//     emit('closeDialog');
+//   } catch (err) {
+//     error.value = err;
+//     $q.notify({
+//       type: 'negative',
+//       message: getErrorMessage(err.code),
+//     });
+//   } finally {
+//     isloading.value = false;
+//   }
+// };
 
 // 구글로그인;
 const handleSignInGoogle = async () => {

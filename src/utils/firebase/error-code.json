@@ -1,5 +1,6 @@
 {
   "auth/invalid-email": "이메일 주소가 올바르지 않습니다.",
   "auth/missing-password": "비밀번호를 입력해주세요.",
-  "auth/wrong-password": "잘못된 비밀번호입니다"
+  "auth/wrong-password": "잘못된 비밀번호입니다",
+  "auth/requires-recent-login": "다시 로그인하세요"
 }
