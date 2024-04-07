@@ -41,6 +41,9 @@ import { useAsyncState } from '@vueuse/core';
 import { useAuthStore } from 'src/stores/auth';
 import { useRouter } from 'vue-router';
 import { route } from 'quasar/wrappers';
+
+const emit = defineEmits('[complete]');
+
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -55,7 +58,8 @@ const { isLoading, execute } = useAsyncState(createPost, null, {
   throwError: true,
   onSuccess: postId => {
     console.log('postId', postId);
-    router.push(`/posts/${postId}`);
+    // router.push(`/posts/${postId}`);
+    emit('complete');
   },
 });
 // const handleSubmit = () =>

@@ -4,7 +4,7 @@
       <PostLeftBar class="col-grow" v-model:category="params.category" />
 
       <section class="col-7">
-        <PostHeader />
+        <PostHeader v-model:sort="params.sort" />
         <PostList :items="posts" />
       </section>
       <PostRightBar
@@ -13,7 +13,11 @@
         @openwrite-dialog="openWriteDialog"
       />
     </div>
-    <PostWriteDialog v-model="postDialog" />
+    <!-- @update:model-value="val => (postDialog = val)" -->
+    <PostWriteDialog
+      v-model="postDialog"
+      @complete="completeRegistrationPost"
+    />
   </q-page>
 </template>
 
@@ -32,36 +36,24 @@ const router = useRouter();
 const params = ref({
   category: null,
   tags: [],
+  sort: 'createdAt',
 });
 
 const { state: posts, execute } = useAsyncState(getPosts, [], {
+  immediate: false,
   throwError: true,
 });
 
-watch(
-  params,
-  () => {
-    execute(0, params.value);
-  },
-  { deep: true },
-);
-
-// const posts = Array.from({ length: 20 }, (_, idx) => ({
-//   id: 'A' + idx,
-//   title: 'VUE3 FIREBASE' + idx,
-//   content:
-//     'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias ea maiores veritatis nihil? Perspiciatis, incidunt ducimus. Tempora a odio labore quia eius error, est sed, sint obcaecati in ut. Consequatur.',
-//   readCount: 1,
-//   commentCount: 2,
-//   likeCount: 3,
-//   bookmarkCount: 4,
-//   uid: 'uid',
-//   category: '카테고리' + idx,
-// }));
+watch(params, () => execute(0, params.value), { deep: true, immediate: true });
 
 const postDialog = ref(false);
 const openWriteDialog = () => {
   postDialog.value = true;
+};
+
+const completeRegistrationPost = () => {
+  postDialog.value = false;
+  execute(0, params.value);
 };
 </script>
 
