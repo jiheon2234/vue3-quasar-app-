@@ -32,7 +32,7 @@
         outlined
         placeholder="태그를 입력해주세요 (Enter)"
         prefix="#"
-        @keypress.enter.prevent="onRegistTag"
+        @keypress.enter.prevent="addTag"
       />
       <q-chip
         v-for="(tag, index) in tags"
@@ -66,9 +66,10 @@
 import { getCategories } from 'src/services/category';
 import { computed } from 'vue';
 import { useQuasar } from 'quasar';
-import { ref } from 'vue';
+import { ref, toRef } from 'vue';
 import TiptabEditor from 'src/components/tiptap/TiptabEditor.vue';
 import { validateRequired } from 'src/utils/validate-rules';
+import { useTag } from 'src/composables/useTag';
 
 const $q = useQuasar();
 
@@ -115,24 +116,12 @@ const contentModel = computed({
   set: val => emit('update:content', val),
 });
 
-const onRegistTag = e => {
-  const tagValue = e.target.value.replace(/ /g, '');
-  if (!tagValue) return;
-  if (props.tags.length >= 5) {
-    $q.notify('태그는 5개까지만 등록할 수 있습니다.');
-    return;
-  }
-  if (!props.tags.includes(tagValue)) {
-    emit('update:tags', [...props.tags, tagValue]);
-  }
-  e.target.value = '';
-};
+const { addTag, removeTag } = useTag({
+  tags: toRef(props, 'tags'),
+  updateTags: tag => emit('update:tags', tag),
+  maxLengthMessage: '태그는 5개까지만 등록할 수 있습니다.',
+});
 
-const removeTag = index => {
-  const model = [...props.tags];
-  model.splice(index, 1);
-  emit('update:tags', model);
-};
 const categories = getCategories();
 
 const handleSubmit = () => {
