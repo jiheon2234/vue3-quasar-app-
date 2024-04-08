@@ -8,6 +8,8 @@ import {
   query,
   where,
   orderBy,
+  getDoc,
+  doc,
 } from 'firebase/firestore';
 
 export async function createPost(data) {
@@ -60,4 +62,19 @@ export async function getPosts(params) {
     return { id: doc.id, ...data, createdAt: data.createdAt?.toDate() };
   });
   return posts;
+}
+
+export async function getPost(id) {
+  const docSnap = await getDoc(doc(db, 'posts', id));
+
+  if (!docSnap.exists()) {
+    throw new Error('No such document!');
+  }
+
+  const data = docSnap.data();
+
+  return {
+    ...data,
+    createdAt: data.createdAt?.toDate(),
+  };
 }

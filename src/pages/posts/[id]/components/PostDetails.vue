@@ -8,6 +8,7 @@
         dense
         color="grey"
         size="16px"
+        @click="$router.back()"
       />
       <q-space />
       <q-btn icon="sym_o_favorite" flat round dense color="red" size="16px" />
@@ -19,7 +20,9 @@
       </q-avatar>
       <div class="q-ml-md">
         <div>Nickname</div>
-        <div class="text-grey-6">3일전</div>
+        <div class="text-grey-6">
+          {{ date.formatDate(post.createdAt, 'YYYY. MM. DD HH:MM') }}
+        </div>
       </div>
       <q-space />
       <q-btn icon="more_horiz" round flat>
@@ -39,31 +42,49 @@
         </q-menu>
       </q-btn>
     </div>
-    <div class="q-mt-md text-h5 text-weight-bold">제목입니다</div>
+    <div class="q-mt-md text-h5 text-weight-bold">{{ post.title }}</div>
+    <div class="text-teal">
+      <span v-for="tag in post.tags" :key="tag">#{{ tag }} &nbsp;</span>
+      {{ post.category }}
+    </div>
+
     <div class="row items-center q-gutter-x-md q-mt-md justify-end">
-      <PostIcon name="sym_o_visibility" label="1" tooltip="조회수" />
-      <PostIcon name="sym_o_sms" label="2" tooltip="댓글수" />
-      <PostIcon name="sym_o_favorite" label="3" tooltip="좋아요" />
-      <PostIcon name="sym_o_bookmark" label="4" tooltip="북마크" />
+      <PostIcon
+        name="sym_o_visibility"
+        :label="post.readCount"
+        tooltip="조회수"
+      />
+      <PostIcon name="sym_o_sms" :label="post.readCount" tooltip="댓글수" />
+      <PostIcon
+        name="sym_o_favorite"
+        :label="post.likeCount"
+        tooltip="좋아요"
+      />
+      <PostIcon
+        name="sym_o_bookmark"
+        :label="post.bookmarkCount"
+        tooltip="북마크"
+      />
     </div>
     <q-separator class="q-my-lg" />
-    <div>
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. In, saepe. Autem
-      iste expedita fuga ut, accusamus repellendus quasi et neque id maxime nam
-      unde veritatis culpa dolorem temporibus quisquam debitis.<br />
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. In, saepe. Autem
-      iste expedita fuga ut, accusamus repellendus quasi et neque id maxime nam
-      unde veritatis culpa dolorem temporibus quisquam debitis.<br />
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. In, saepe. Autem
-      iste expedita fuga ut, accusamus repellendus quasi et neque id maxime nam
-      unde veritatis culpa dolorem temporibus quisquam debitis.<br />
-    </div>
+    <TiptabViewer v-if="post.content" :content="post.content" />
   </BaseCard>
 </template>
 
 <script setup>
+import { date } from 'quasar';
 import PostIcon from 'src/components/apps/post/PostIcon.vue';
 import BaseCard from 'src/components/base/BaseCard.vue';
+import { getPost } from 'src/services';
+import { useAsyncState } from '@vueuse/core';
+import { useRoute } from 'vue-router';
+import TiptabViewer from 'src/components/tiptap/TiptabViewer.vue';
+
+const route = useRoute();
+const { state: post, error } = useAsyncState(
+  () => getPost(route.params.id),
+  {},
+);
 </script>
 
 <style lang="scss" scoped></style>

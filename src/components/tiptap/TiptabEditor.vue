@@ -59,3 +59,14 @@ watch(
   pointer-events: none;
 }
 </style>
+<style lang="scss" scoped>
+.editor__content {
+  flex: 1;
+  display: flex;
+  overflow-y: auto;
+  padding: 16px 20px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  height: 400px;
+}
+</style>
