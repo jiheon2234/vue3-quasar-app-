@@ -1,15 +1,12 @@
 <template>
-  <q-div class="tiptap">
+  <div class="tiptap">
     <editor-content class="editor__content" :editor="editor" />
-  </q-div>
+  </div>
 </template>
 
 <script setup>
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
-import { watch } from 'vue';
-
-import TiptabEditorMenu from 'components/tiptap/TiptabEditorMenu.vue';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 
@@ -20,14 +17,10 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:modelValue']);
-
 const editor = useEditor({
   content: props.content,
   extensions: [StarterKit, Link, Image],
-
   editable: false,
 });
 </script>
-
 <style lang="scss" src="src/css/tiptap.scss"></style>
