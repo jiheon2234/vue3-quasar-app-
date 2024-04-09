@@ -6,13 +6,14 @@
       <section class="col-7">
         <PostHeader v-model:sort="params.sort" />
         <PostList :items="items" />
-        <q-btn
+        <!-- <q-btn
           v-if="isLoadMore"
           class="full-width q-mt-md"
           label="더보기"
           outline
           @click="loadMore"
-        />
+        /> -->
+        <div v-intersection-observer="handleInterSectionObserver"></div>
       </section>
       <PostRightBar
         v-model:tags="params.tags"
@@ -38,21 +39,21 @@ import PostWriteDialog from 'src/components/apps/post/PostWriteDialog.vue';
 import { ref, watch } from 'vue';
 import { getPosts } from 'src/services';
 import { useAsyncState } from '@vueuse/core';
-import { limit } from 'firebase/firestore';
+import { vIntersectionObserver } from '@vueuse/components';
 
 const router = useRouter();
 const params = ref({
   category: null,
   tags: [],
   sort: 'createdAt',
-  limit: 2,
+  limit: 5,
 });
 
 const items = ref([]);
 const start = ref(null);
 const isLoadMore = ref(true);
 
-const { execute } = useAsyncState(getPosts, [], {
+const { isLoading, execute } = useAsyncState(getPosts, [], {
   immediate: false,
   throwError: true,
   onSuccess: result => {
@@ -73,7 +74,7 @@ watch(
     start.value = null;
     execute(0, params.value);
   },
-  { deep: true, immediate: true },
+  { deep: true, immediate: false },
 );
 
 const postDialog = ref(false);
@@ -86,8 +87,22 @@ const completeRegistrationPost = () => {
   execute(0, params.value);
 };
 
+// const vInterSectionObserver = {
+//   beforeMount: (el, binding) => {
+//     const observer = new IntersectionObserver(binding.value);
+//     observer.observe(el);
+//   },
+// };
+
 const loadMore = () => {
   execute(0, { ...params.value, start: start.value });
+};
+
+const handleInterSectionObserver = ([{ isIntersecting }]) => {
+  if (isIntersecting && isLoadMore.value) {
+    console.log('### handleInterSectionObserver ###');
+    loadMore();
+  }
 };
 </script>
 
