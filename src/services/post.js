@@ -12,6 +12,8 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  startAfter,
+  limit,
 } from 'firebase/firestore';
 
 export async function createPost(data) {
@@ -24,25 +26,7 @@ export async function createPost(data) {
     createdAt: serverTimestamp(),
   });
   return docRef.id;
-  // await setDoc(doc(db, 'posts', '[pstOd]'), {
-  //   ...data,
-  //   readCount: 0,
-  //   likeCount: 0,
-  //   commentcount: 0,
-  //   bookmarkCount: 0,
-  //   createdAt: serverTimestamp(),
-  // });
 }
-
-// export async function getPosts(params) {
-//   const querySnapshot = await getDocs(collection(db, 'posts'));
-//   const posts = querySnapshot.docs.map(doc => {
-//     const data = doc.data();
-//     return { id: doc.id, ...data, createdAt: data.createdAt.toDate() };
-//   });
-//   console.log(posts);
-//   return posts;
-// }
 
 export async function getPosts(params) {
   const conditions = [];
@@ -56,6 +40,12 @@ export async function getPosts(params) {
   if (params?.sort) {
     conditions.push(orderBy(params.sort, 'desc'));
   }
+  if (params?.start) {
+    conditions.push(startAfter(params.start));
+  }
+  if (params?.limit) {
+    conditions.push(limit(params.limit));
+  }
 
   const q = query(collection(db, 'posts'), ...conditions);
   const querySnapshot = await getDocs(q);
@@ -63,7 +53,8 @@ export async function getPosts(params) {
     const data = doc.data();
     return { id: doc.id, ...data, createdAt: data.createdAt?.toDate() };
   });
-  return posts;
+  const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+  return { items: posts, lastItem: lastDoc };
 }
 
 export async function getPost(id) {
