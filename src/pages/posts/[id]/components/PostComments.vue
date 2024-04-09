@@ -3,11 +3,26 @@
     <div class="text-subtitle1 text-weight-bold q-mg-l">댓글 6</div>
 
     <div v-if="isActive">
-      <q-input type="textarea" class="bg-white" outlined> </q-input>
-      <div class="flex justify-end q-gutter-x-sm q-mt-sm">
-        <q-btn label="취소" color="dark" unelevated @click="toggleActive" />
-        <q-btn label="등록" color="primary" unelevated />
-      </div>
+      <q-form @submit.prevent="handleAddComment">
+        <q-input
+          v-model="message"
+          type="textarea"
+          outlined
+          hide-bottom-space
+          :rules="[validateRequired]"
+        >
+        </q-input>
+        <div class="flex justify-end q-gutter-x-sm q-mt-sm">
+          <q-btn label="취소" color="dark" unelevated @click="toggleActive" />
+          <q-btn
+            type="submit"
+            label="등록"
+            color="primary"
+            unelevated
+            :loading="isLoading"
+          />
+        </div>
+      </q-form>
     </div>
 
     <BaseCard v-if="!isActive" @click="toggleActive" class="cursor-pointer">
@@ -19,7 +34,11 @@
       </q-card-section>
     </BaseCard>
 
-    <CommentList :items="comments" />
+    <CommentList
+      :post-id="$route.params.id"
+      :items="comments"
+      @deleted="deletedComment"
+    />
   </div>
 </template>
 
@@ -27,10 +46,51 @@
 import { ref } from 'vue';
 import CommentList from 'src/components/apps/comment/CommentList.vue';
 import BaseCard from 'src/components/base/BaseCard.vue';
+import { useQuasar } from 'quasar';
+import { useRoute } from 'vue-router';
+import { useAsyncState } from '@vueuse/core';
+import { useAuthStore } from 'src/stores/auth';
+import { addComment, getComments } from 'src/services';
+import { validateRequired } from 'src/utils/validate-rules';
+const $q = useQuasar();
 const isActive = ref(false);
 const toggleActive = () => (isActive.value = !isActive.value);
 
-const comments = ref([{ id: 1 }, { id: 2 }, { id: 3 }]);
+const route = useRoute();
+const authStore = useAuthStore();
+
+const { state: comments, execute: executeGetComments } = useAsyncState(
+  () => getComments(route.params.id),
+  [],
+  {
+    resetOnExecute: false,
+  },
+);
+
+const message = ref('');
+const { isLoading, execute: executeAddComments } = useAsyncState(
+  addComment,
+  null,
+  {
+    immediate: false,
+    throwError: true,
+    onSuccess: () => {
+      message.value = '';
+      isActive.value = false;
+      executeGetComments(0);
+    },
+  },
+);
+const handleAddComment = async () => {
+  executeAddComments(0, route.params.id, {
+    message: message.value,
+    uid: authStore.uid,
+  });
+};
+
+const deletedComment = () => {
+  executeGetComments(0);
+};
 </script>
 
 <style lang="scss" scoped></style>
