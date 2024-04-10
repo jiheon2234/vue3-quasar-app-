@@ -1,10 +1,10 @@
 <template>
   <q-page>
     <div class="row q-col-gutter-x-lg">
-      <PostLeftBar class="col-grow" v-model:category="params.category" />
+      <PostLeftBar class="col-grow" v-model:category="category" />
 
       <section class="col-7">
-        <PostHeader v-model:sort="params.sort" />
+        <PostHeader v-model:sort="sort" />
 
         <PostList :items="items" />
         <!-- <q-btn
@@ -17,7 +17,7 @@
         <div v-intersection-observer="handleInterSectionObserver"></div>
       </section>
       <PostRightBar
-        v-model:tags="params.tags"
+        v-model:tags="tags"
         class="col-3"
         @openwrite-dialog="openWriteDialog"
       />
@@ -37,19 +37,26 @@ import PostHeader from './components/PostHeader.vue';
 import PostLeftBar from './components/PostLeftBar.vue';
 import PostRightBar from './components/PostRightBar.vue';
 import PostWriteDialog from 'src/components/apps/post/PostWriteDialog.vue';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { getPosts } from 'src/services';
 import { useAsyncState } from '@vueuse/core';
 import { vIntersectionObserver } from '@vueuse/components';
-import { formatRelativeTime } from 'src/utils/relative-time-format';
-
+import { usePostQuery } from 'src/composables/usePostQuery';
+const { category, sort, tags } = usePostQuery();
 const router = useRouter();
-const params = ref({
-  category: null,
-  tags: [],
-  sort: 'createdAt',
+const params = computed(() => ({
+  category: category.value,
+  tags: tags.value,
+  sort: sort.value,
   limit: 5,
-});
+}));
+
+// const params = ref({
+//   category: category.value,
+//   tags: [],
+//   sort: 'createdAt',
+//   limit: 5,
+// });
 
 const items = ref([]);
 const start = ref(null);
