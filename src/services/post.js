@@ -21,7 +21,7 @@ export async function createPost(data) {
     ...data,
     readCount: 0,
     likeCount: 0,
-    commentcount: 0,
+    commentCount: 0,
     bookmarkCount: 0,
     createdAt: serverTimestamp(),
   });
@@ -54,6 +54,7 @@ export async function getPosts(params) {
     return { id: doc.id, ...data, createdAt: data.createdAt?.toDate() };
   });
   const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+
   return { items: posts, lastItem: lastDoc };
 }
 
@@ -81,4 +82,27 @@ export async function updatePost(id, data) {
 
 export async function deletePost(id) {
   await deleteDoc(doc(db, 'posts', id));
+}
+
+/**
+ *  1)계시글 좋아요
+ *  2)계시글 좋아요 취소
+ *  3)계시글 좋아요 조회
+ */
+
+export async function addLike(uid, postId) {
+  await setDoc(doc(db, 'post_likes', `${uid}_${postId}`), {
+    uid,
+    postId,
+    createdAt: serverTimestamp(),
+  });
+}
+
+export async function removeLike(uid, postId) {
+  await deleteDoc(doc(db, 'post_likes', `${uid}_${postId}`));
+}
+
+export async function hasLike(uid, postId) {
+  const docSnap = getDoc(doc(db, 'post_likes', `${uid}_${postId}`));
+  return (await docSnap).exists();
 }

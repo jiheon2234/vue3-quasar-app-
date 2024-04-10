@@ -11,7 +11,15 @@
         @click="$router.back()"
       />
       <q-space />
-      <q-btn icon="sym_o_favorite" flat round dense color="red" size="16px" />
+      <q-btn
+        :icon="isLike ? 'favorite' : 'sym_o_favorite'"
+        flat
+        round
+        dense
+        color="red"
+        size="16px"
+        @click="togglelike"
+      />
       <q-btn icon="sym_o_bookmark" flat round dense color="blue" size="16px" />
     </div>
     <div class="flex items-center">
@@ -55,11 +63,7 @@
         tooltip="조회수"
       />
       <PostIcon name="sym_o_sms" :label="post.readCount" tooltip="댓글수" />
-      <PostIcon
-        name="sym_o_favorite"
-        :label="post.likeCount"
-        tooltip="좋아요"
-      />
+      <PostIcon name="sym_o_favorite" :label="likeCount" tooltip="좋아요" />
       <PostIcon
         name="sym_o_bookmark"
         :label="post.bookmarkCount"
@@ -80,6 +84,7 @@ import { useAsyncState } from '@vueuse/core';
 import { useRoute, useRouter } from 'vue-router';
 import TiptabViewer from 'src/components/tiptap/TiptabViewer.vue';
 import { useAuthStore } from 'src/stores/auth';
+import { useLike } from 'src/composables/useLike';
 
 const route = useRoute();
 const router = useRouter();
@@ -88,6 +93,9 @@ const { hasOwnContent } = useAuthStore();
 const { state: post, error } = useAsyncState(
   () => getPost(route.params.id),
   {},
+  {
+    onSuccess: result => updateLikeCount(result.likeCount),
+  },
 );
 const { execute: executeDeletePost } = useAsyncState(deletePost, null, {
   immediate: false,
@@ -102,6 +110,10 @@ const handleDeletePost = async () => {
   }
   await executeDeletePost(0, route.params.id);
 };
+const { isLike, likeCount, togglelike, updateLikeCount } = useLike(
+  route.params.id,
+  {},
+);
 </script>
 
 <style lang="scss" scoped></style>

@@ -53,13 +53,6 @@ const params = computed(() => ({
   limit: 5,
 }));
 
-// const params = ref({
-//   category: category.value,
-//   tags: [],
-//   sort: 'createdAt',
-//   limit: 5,
-// });
-
 const items = ref([]);
 const start = ref(null);
 const isLoadMore = ref(true);
@@ -90,7 +83,7 @@ watch(
 
 const postDialog = ref(false);
 const openWriteDialog = () => {
-  if (!authStore.isLogin) {
+  if (!authStore.isAuthenticated) {
     alert('로그인 후 이용 가능');
     return;
   }
