@@ -17,7 +17,9 @@ export const useLike = (id, options) => {
       isLike.value = false;
       return;
     }
-    isLike.value = await hasLike(uid.value, postId.value);
+    const value = await hasLike(uid.value, postId.value);
+
+    isLike.value = value;
   };
 
   const togglelike = async () => {

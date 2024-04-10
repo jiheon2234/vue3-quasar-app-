@@ -2,18 +2,9 @@
   <q-page>
     <div class="row q-col-gutter-x-lg">
       <PostLeftBar class="col-grow" v-model:category="category" />
-
       <section class="col-7">
         <PostHeader v-model:sort="sort" />
-
         <PostList :items="items" />
-        <!-- <q-btn
-          v-if="isLoadMore"
-          class="full-width q-mt-md"
-          label="더보기"
-          outline
-          @click="loadMore"
-        /> -->
         <div v-intersection-observer="handleInterSectionObserver"></div>
       </section>
       <PostRightBar
@@ -22,7 +13,6 @@
         @openwrite-dialog="openWriteDialog"
       />
     </div>
-    <!-- @update:model-value="val => (postDialog = val)" -->
     <PostWriteDialog
       v-model="postDialog"
       @complete="completeRegistrationPost"
@@ -95,14 +85,6 @@ const completeRegistrationPost = () => {
   start.value = null;
   execute(0, params.value);
 };
-
-// const vInterSectionObserver = {
-//   beforeMount: (el, binding) => {
-//     const observer = new IntersectionObserver(binding.value);
-//     observer.observe(el);
-//   },
-// };
-
 const loadMore = () => {
   execute(0, { ...params.value, start: start.value });
 };

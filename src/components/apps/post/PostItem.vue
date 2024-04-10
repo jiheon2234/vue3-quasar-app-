@@ -54,10 +54,15 @@
         </div>
         <div class="col-3">
           <div class="flex flex-center">
-            <q-btn class="full-width" flat dense @click.prevent>
+            <q-btn
+              class="full-width"
+              flat
+              dense
+              @click.prevent="togglebookmark"
+            >
               <PostIcon
-                name="sym_o_bookmark"
-                :label="item.bookmarkCount"
+                :name="isBookmark ? 'bookmark' : 'sym_o_bookmark'"
+                :label="bookmarkCount"
                 tooltip="북마크"
               />
             </q-btn>
@@ -77,6 +82,7 @@ import { useAuthStore } from 'src/stores/auth';
 import { storeToRefs } from 'pinia';
 import { toRefs, ref, watch } from 'vue';
 import { useLike } from 'src/composables/useLike';
+import { useBookmark } from 'src/composables/useBookmark';
 
 const props = defineProps({
   item: {
@@ -88,6 +94,13 @@ const props = defineProps({
 const { isLike, likeCount, togglelike } = useLike(props.item.id, {
   initialCount: props.item.likeCount,
 });
+
+const { isBookmark, bookmarkCount, togglebookmark } = useBookmark(
+  props.item.id,
+  {
+    initialCount: props.item.bookmarkCount,
+  },
+);
 </script>
 
 <style lang="scss" scoped></style>
