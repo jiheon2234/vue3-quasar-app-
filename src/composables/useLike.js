@@ -27,7 +27,7 @@ export const useLike = (id, options) => {
       alert('로그인 후 이용 가능');
       return;
     }
-    debugger;
+
     if (isLike.value) {
       await removeLike(uid.value, postId.value);
       likeCount.value--;

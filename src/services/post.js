@@ -14,6 +14,7 @@ import {
   deleteDoc,
   startAfter,
   limit,
+  increment,
 } from 'firebase/firestore';
 
 export async function createPost(data) {
@@ -64,6 +65,7 @@ export async function getPost(id) {
   if (!docSnap.exists()) {
     throw new Error('No such document!');
   }
+  console.log('readCount', docSnap.data().readCount);
 
   const data = docSnap.data();
 
@@ -71,6 +73,20 @@ export async function getPost(id) {
     id: docSnap.id,
     ...data,
     createdAt: data.createdAt?.toDate(),
+  };
+}
+
+async function incrementReadCount(id) {
+  await updateDoc(doc(db, 'posts', id), {
+    readCount: increment(1),
+  });
+}
+
+export async function getPostDetails(id) {
+  const post = await getPost(id);
+  incrementReadCount(id);
+  return {
+    post,
   };
 }
 

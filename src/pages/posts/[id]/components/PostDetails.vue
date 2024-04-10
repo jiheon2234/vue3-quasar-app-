@@ -76,10 +76,11 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { date, useQuasar } from 'quasar';
 import PostIcon from 'src/components/apps/post/PostIcon.vue';
 import BaseCard from 'src/components/base/BaseCard.vue';
-import { deletePost, getPost } from 'src/services';
+import { deletePost, getPostDetails } from 'src/services';
 import { useAsyncState } from '@vueuse/core';
 import { useRoute, useRouter } from 'vue-router';
 import TiptabViewer from 'src/components/tiptap/TiptabViewer.vue';
@@ -90,11 +91,15 @@ const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
 const { hasOwnContent } = useAuthStore();
-const { state: post, error } = useAsyncState(
-  () => getPost(route.params.id),
+const post = ref({});
+const { error } = useAsyncState(
+  () => getPostDetails(route.params.id),
   {},
   {
-    onSuccess: result => updateLikeCount(result.likeCount),
+    onSuccess: result => {
+      post.value = result.post;
+      updateLikeCount(result.post.likeCount);
+    },
   },
 );
 const { execute: executeDeletePost } = useAsyncState(deletePost, null, {
