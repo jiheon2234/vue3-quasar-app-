@@ -42,7 +42,9 @@ import { getPosts } from 'src/services';
 import { useAsyncState } from '@vueuse/core';
 import { vIntersectionObserver } from '@vueuse/components';
 import { usePostQuery } from 'src/composables/usePostQuery';
+import { useAuthStore } from 'src/stores/auth';
 const { category, sort, tags } = usePostQuery();
+const authStore = useAuthStore();
 const router = useRouter();
 const params = computed(() => ({
   category: category.value,
@@ -88,6 +90,10 @@ watch(
 
 const postDialog = ref(false);
 const openWriteDialog = () => {
+  if (!authStore.isLogin) {
+    alert('로그인 후 이용 가능');
+    return;
+  }
   postDialog.value = true;
 };
 

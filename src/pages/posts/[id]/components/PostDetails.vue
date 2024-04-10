@@ -25,7 +25,7 @@
         </div>
       </div>
       <q-space />
-      <q-btn icon="more_horiz" round flat>
+      <q-btn v-if="hasOwnContent(post.uid)" icon="more_horiz" round flat>
         <q-menu>
           <q-list style="min-width: 100px">
             <q-item
@@ -79,10 +79,12 @@ import { deletePost, getPost } from 'src/services';
 import { useAsyncState } from '@vueuse/core';
 import { useRoute, useRouter } from 'vue-router';
 import TiptabViewer from 'src/components/tiptap/TiptabViewer.vue';
+import { useAuthStore } from 'src/stores/auth';
 
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
+const { hasOwnContent } = useAuthStore();
 const { state: post, error } = useAsyncState(
   () => getPost(route.params.id),
   {},

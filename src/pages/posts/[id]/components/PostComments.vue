@@ -53,11 +53,17 @@ import { useAuthStore } from 'src/stores/auth';
 import { addComment, getComments } from 'src/services';
 import { validateRequired } from 'src/utils/validate-rules';
 const $q = useQuasar();
-const isActive = ref(false);
-const toggleActive = () => (isActive.value = !isActive.value);
-
 const route = useRoute();
 const authStore = useAuthStore();
+const isActive = ref(false);
+
+const toggleActive = () => {
+  if (!isActive.value && !authStore.isAuthenticated) {
+    alert('로그인 후  이용가능');
+    return;
+  }
+  isActive.value = !isActive.value;
+};
 
 const { state: comments, execute: executeGetComments } = useAsyncState(
   () => getComments(route.params.id),
