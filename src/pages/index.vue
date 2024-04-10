@@ -5,6 +5,7 @@
 
       <section class="col-7">
         <PostHeader v-model:sort="params.sort" />
+
         <PostList :items="items" />
         <!-- <q-btn
           v-if="isLoadMore"
@@ -40,6 +41,7 @@ import { ref, watch } from 'vue';
 import { getPosts } from 'src/services';
 import { useAsyncState } from '@vueuse/core';
 import { vIntersectionObserver } from '@vueuse/components';
+import { formatRelativeTime } from 'src/utils/relative-time-format';
 
 const router = useRouter();
 const params = ref({
@@ -84,6 +86,7 @@ const openWriteDialog = () => {
 
 const completeRegistrationPost = () => {
   postDialog.value = false;
+  start.value = null;
   execute(0, params.value);
 };
 
