@@ -24,9 +24,11 @@
     "@vueuse/components": "^10.9.0",
     "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
+    "browser-image-resizer": "^2.4.1",
     "firebase": "^10.6.0",
     "pinia": "^2.1.7",
     "quasar": "^2.6.0",
+    "uuid": "^9.0.1",
     "vue": "^3.4.21",
     "vue-router": "^4.0.0"
   },
